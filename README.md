@@ -292,6 +292,57 @@ In Angular, a custom pipe allows you to create your own reusable transformation 
 Custom pipes are defined using the `@Pipe` decorator and implementing the `PipeTransform` interface. 
 They can be used to format, filter, or transform data in various ways. Custom pipes can be applied in templates using the pipe operator (|) followed by the name of the custom pipe.
 
+## Pipes Types
+In Angular, pipes are used for data transformation in templates. There are two types of pipes: pure pipes and impure pipes.
+
+1. **Pure Pipes**:
+   - Pure pipes are stateless. They do not maintain any internal state.
+   - They are executed only when Angular detects a pure change to the input value (i.e., the input value or its reference has changed).
+   - Pure pipes are more efficient because they are called only when necessary.
+   - Example: The `UpperCasePipe` is a pure pipe that transforms a string to uppercase.
+
+   ```html
+   {{ 'hello' | uppercase }} <!-- Output: 'HELLO' -->
+   ```
+
+2. **Impure Pipes**
+   
+   - Impure pipes may have internal state or perform costly operations that are not dependent on the input value.
+   - They are executed every time change detection runs, regardless of whether the input value has changed.
+   - Impure pipes can impact performance if used carelessly because they run frequently.
+   - Example: The `DatePipe` is an impure pipe that formats a date. Since it doesn't rely solely on the input, it's impure.
+
+   ```html
+   {{ today | date:'short' }}
+   ```
+
+Here's a comparison with an example:
+
+```typescript
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'custom'
+})
+export class CustomPipe implements PipeTransform {
+  transform(value: string): string {
+    return value + ' transformed';
+  }
+}
+```
+
+Using this pipe in a template:
+
+```html
+<!-- Pure Pipe -->
+{{ 'hello' | custom }} <!-- Output: 'hello transformed' -->
+
+<!-- Impure Pipe -->
+{{ 'hello' | custom }} <!-- Output: 'hello transformed' -->
+```
+
+In this example, whether you use the `CustomPipe` as a pure or impure pipe, the result is the same. However, if you had some costly operations or internal state management within `CustomPipe`, it would be better to use it as an impure pipe only when necessary to avoid unnecessary computations.
+
 ## Interceptor:
 
 Interceptors in Angular are used to intercept HTTP requests and responses globally, allowing you to modify or handle them before they reach the server or the client. 
